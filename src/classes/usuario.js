@@ -13,11 +13,11 @@ class Usuario {
     /**
      * Construtor da classe Usuario
      * @param {Object} dados - dados do usuário
-     * @param {number} dados.id - identificador único
+     * @param {ObjectId|string} [dados._id] - identificador único (gerado pelo MongoDB)
      * @param {string} dados.nome - nome do usuário
      * @param {string} dados.telefone - telefone do usuário
-     * @param {string} dados.email - email do usuário
-     * @param {Date} dados.dataCriacao - data de criação do registro
+     * @param {string} [dados.email] - email do usuário (opcional)
+     * @param {Date} [dados.dataCriacao] - data de criação do registro
      */
     constructor(dados = {}) {
         this.id = dados.id || null;
