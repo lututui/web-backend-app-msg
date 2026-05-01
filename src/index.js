@@ -1,40 +1,83 @@
+/**
+ * Ponto de entrada do projeto
+ *
+ * Cumpre dois papéis:
+ *  1. Quando importado (require): exporta as classes da biblioteca
+ *  2. Quando executado (npm start): roda uma demonstração das funcionalidades
+ */
+
 const Conexao = require('./database/Conexao');
+const Usuario = require('./classes/Usuario');
+const Conversa = require('./classes/Conversa');
+const Mensagem = require('./classes/Mensagem');
 const Logger = require('./utils/Logger');
+const Validador = require('./utils/Validador');
 
-async function testarConexao() {
-    console.log('=== Teste de Conexão com MongoDB ===\n');
-
+async function demonstracao() {
     try {
-        console.log('[1/3] Conectando ao MongoDB');
         await Conexao.conectar();
 
-        console.log('[2/3] Verificando se a conexão está ativa (ping)...');
-        const ativa = await Conexao.estaAtiva();
-        
-        if (!ativa) {
-            throw new Error('A conexão com o MongoDB não está ativa.');
-        }
+        // 1. Criar usuários
+        const ana = new Usuario({ nome: 'Ana', telefone: '11911111111' });
+        const bruno = new Usuario({ nome: 'Bruno', telefone: '11922222222' });
+        await ana.criar();
+        await bruno.criar();
+        console.log(`Usuários criados: ${ana.nome}, ${bruno.nome}`);
 
-        console.log('[3/3] Listando coleções do banco...');
-        const db = Conexao.getDB();
-        const colecoes = await db.listCollections().toArray();
+        // 2. Criar conversa
+        const conversa = new Conversa({
+            tipo: 'individual',
+            participantes: [ana.id, bruno.id]
+        });
+        await conversa.criar();
+        console.log(`Conversa criada: ${conversa.id}`);
 
-        console.log(colecoes);
+        // 3. Trocar mensagens
+        const msg1 = new Mensagem({
+            conversaId: conversa.id,
+            remetenteId: ana.id,
+            conteudo: 'Olá, Bruno!'
+        });
+        await msg1.enviar();
 
-        console.log('=== Teste concluído com sucesso ===');
+        const msg2 = new Mensagem({
+            conversaId: conversa.id,
+            remetenteId: bruno.id,
+            conteudo: 'Oi Ana, tudo bem?'
+        });
+        await msg2.enviar();
+
+        // 4. Listar mensagens da conversa
+        const historico = await Mensagem.buscarPorConversa(conversa.id);
+        console.log(`\nHistórico (${historico.length} mensagens):`);
+        historico.forEach(m => {
+            console.log(`  [${m.timestamp.toLocaleTimeString()}] ${m.conteudo}`);
+        });
+
+        // 5. Marcar mensagem como lida
+        await msg1.marcarComoLida();
+        console.log(`\nMensagem ${msg1.id} marcada como lida.`);
+
     } catch (erro) {
-        console.error('\n✗ ERRO durante o teste:');
-        console.error(`  ${erro.message}\n`);
-        Logger.error(erro, 'index.testarConexao');
+        console.error('Erro na demonstração:', erro.message);
+        Logger.error(erro, 'index.demonstracao');
         process.exitCode = 1;
     } finally {
-        try {
-            await Conexao.desconectar();
-            console.log('\nConexão encerrada.');
-        } catch (erro) {
-            console.error(`Erro ao desconectar: ${erro.message}`);
-        }
+        await Conexao.desconectar();
     }
 }
 
-testarConexao();
+// Roda a demonstração apenas se o arquivo for executado diretamente
+if (require.main === module) {
+    demonstracao();
+}
+
+
+module.exports = {
+    Conexao,
+    Usuario,
+    Conversa,
+    Mensagem,
+    Logger,
+    Validador
+};
