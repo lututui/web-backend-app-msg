@@ -20,7 +20,7 @@ class Usuario {
      * @param {Date} [dados.dataCriacao] - data de criação do registro
      */
     constructor(dados = {}) {
-        this.id = dados.id || null;
+        this.id = dados.id || dados._id || null;
         this.nome = dados.nome || '';
         this.telefone = dados.telefone || '';
         this.email = dados.email || '';

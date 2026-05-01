@@ -23,7 +23,7 @@ class Conversa {
      * @param {Date} [dados.dataCriacao] - data de criação da conversa
      */
     constructor(dados = {}) {
-        this.id = dados.id || null;
+        this.id = dados.id || dados._id || null;
         this.nome = dados.nome || '';
         this.tipo = dados.tipo || 'individual';
         this.participantes = dados.participantes || [];
