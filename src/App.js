@@ -12,6 +12,10 @@ const path = require('path');
 const express = require('express');
 const hbs = require('hbs');
 
+const sessao = require('./config/Sessao');
+const flash = require('./middlewares/Flash');
+const { carregarUsuario } = require('./middlewares/Autenticacao');
+
 const app = express();
 
 // Caminhos do projeto
@@ -29,6 +33,11 @@ app.use(express.static(DIR_PUBLICO));
 app.set('view engine', 'hbs');
 app.set('views', DIR_VIEWS);
 hbs.registerPartials(DIR_PARTIALS);
+
+app.use(sessao);
+
+app.use(flash);
+app.use(carregarUsuario);
 
 // Rota de teste
 app.get('/', (req, res) => {
