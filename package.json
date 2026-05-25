@@ -5,12 +5,15 @@
   "license": "ISC",
   "author": "",
   "type": "commonjs",
-  "main": "src/index.js",
+  "main": "src/Server.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node src/Server.js",
+    "demo": "node src/index.js",
     "test": "node tests/usuario.test.js && node tests/conversa.test.js && node tests/mensagem.test.js"
   },
   "dependencies": {
+    "express": "^5.2.1",
+    "hbs": "^4.2.1",
     "mongodb": "^7.2.0"
   }
 }
