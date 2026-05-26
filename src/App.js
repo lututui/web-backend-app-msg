@@ -39,10 +39,14 @@ app.use(sessao);
 app.use(flash);
 app.use(carregarUsuario);
 
+app.use(require('./routes'));
+
+/*
 // Rota de teste
 app.get('/', (req, res) => {
     res.send('Hello world');
 });
+*/
 
 /** 
  * Erros

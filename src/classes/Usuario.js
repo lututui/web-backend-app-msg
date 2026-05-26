@@ -18,6 +18,8 @@ class Usuario {
      * @param {string} dados.telefone - telefone do usuário
      * @param {string} [dados.email] - email do usuário (opcional)
      * @param {Date} [dados.dataCriacao] - data de criação do registro
+     * @param {string} [dados.senhaHash] - hash da senha
+     * @param {string} [dados.senhaSalt] - salt usado no hash da senha
      */
     constructor(dados = {}) {
         this.id = dados.id || dados._id || null;
@@ -25,6 +27,9 @@ class Usuario {
         this.telefone = dados.telefone || '';
         this.email = dados.email || '';
         this.dataCriacao = dados.dataCriacao || null;
+
+        this.senhaHash = dados.senhaHash || '';
+        this.senhaSalt = dados.senhaSalt || '';
     }
 
     /**
@@ -67,6 +72,11 @@ class Usuario {
                 email: this.email,
                 dataCriacao: this.dataCriacao
             };
+
+            if (this.senhaHash && this.senhaSalt) {
+                documento.senhaHash = this.senhaHash;
+                documento.senhaSalt = this.senhaSalt;
+            }
 
             const resultado = await Usuario._colecao().insertOne(documento);
             this.id = resultado.insertedId;
@@ -180,18 +190,21 @@ class Usuario {
             if (this.email && this.email.length > 0) {
                 Validador.validarEmail(this.email);
             }
- 
-            const atualizacao = {
-                $set: {
-                    nome: this.nome,
-                    telefone: this.telefone,
-                    email: this.email
-                }
+
+            const campos = {
+                nome: this.nome,
+                telefone: this.telefone,
+                email: this.email
             };
+
+            if (this.senhaHash && this.senhaSalt) {
+                campos.senhaHash = this.senhaHash;
+                campos.senhaSalt = this.senhaSalt;
+            }
  
             const resultado = await Usuario._colecao().updateOne(
                 { _id: objectId },
-                atualizacao
+                { $set: campos }
             );
  
             if (resultado.matchedCount === 0) {
