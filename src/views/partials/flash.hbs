@@ -1,0 +1,30 @@
+{{#if flash.sucesso.length}}
+    <div class="aviso aviso--sucesso">
+        <ul class="aviso__lista">
+            {{#each flash.sucesso}}
+                <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}
+
+{{#if flash.erro.length}}
+    <div class="aviso aviso--erro">
+        <ul class="aviso__lista">
+            {{#each flash.erro}}
+                <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}
+
+{{#if erros.length}}
+    <div class="aviso aviso--erro">
+        <p class="aviso__titulo">Corrija os campos abaixo:</p>
+        <ul class="aviso__lista">
+            {{#each erros}}
+                <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}

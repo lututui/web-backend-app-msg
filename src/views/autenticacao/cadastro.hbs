@@ -1,0 +1,68 @@
+{{> cabecalho}}
+
+<section class="cartao cartao--auth">
+    <p class="cartao__supra">Comece agora</p>
+    <h1 class="cartao__titulo">Criar uma conta</h1>
+
+    {{> flash}}
+
+    <form class="formulario" method="post" action="/cadastro">
+        <label class="campo">
+            <span class="campo__rotulo">Nome <em>*</em></span>
+            <input
+                class="campo__entrada"
+                type="text"
+                name="nome"
+                value="{{valores.nome}}"
+                placeholder="Seu nome">
+        </label>
+
+        <label class="campo">
+            <span class="campo__rotulo">Telefone <em>*</em></span>
+            <input
+                class="campo__entrada"
+                type="text"
+                name="telefone"
+                value="{{valores.telefone}}"
+                placeholder="(00) 00000-0000">
+        </label>
+
+        <label class="campo">
+            <span class="campo__rotulo">E-mail <span class="campo__opcional">(opcional)</span></span>
+            <input
+                class="campo__entrada"
+                type="text"
+                name="email"
+                value="{{valores.email}}"
+                placeholder="voce@exemplo.com">
+        </label>
+
+        <div class="campo__dupla">
+            <label class="campo">
+                <span class="campo__rotulo">Senha <em>*</em></span>
+                <input
+                    class="campo__entrada"
+                    type="password"
+                    name="senha"
+                    placeholder="Mínimo 6 caracteres">
+            </label>
+
+            <label class="campo">
+                <span class="campo__rotulo">Confirmar senha <em>*</em></span>
+                <input
+                    class="campo__entrada"
+                    type="password"
+                    name="confirmacaoSenha"
+                    placeholder="Repita a senha">
+            </label>
+        </div>
+
+        <button class="botao botao--bloco" type="submit">Criar conta</button>
+    </form>
+
+    <p class="cartao__rodape">
+        Já tem conta? <a href="/login">Entrar</a>
+    </p>
+</section>
+
+{{> rodape}}

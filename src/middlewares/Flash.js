@@ -12,6 +12,10 @@ function flash(req, res, next) {
     }
 
     res.flash = function (tipo, mensagem) {
+        if (!req.session.flash) {
+            req.session.flash = { erro: [], sucesso: [] };
+        }
+
         if (!req.session.flash[tipo]) {
             req.session.flash[tipo] = [];
         }

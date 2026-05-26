@@ -1,0 +1,19 @@
+<header class="navbar">
+    <a class="navbar__marca" href="/">
+        <span class="navbar__ponto"></span> app-msg
+    </a>
+
+    <nav class="navbar__menu">
+        {{#if usuarioLogado}}
+            <a class="navbar__link" href="/conversas">Conversas</a>
+            <a class="navbar__link" href="/perfil">Perfil</a>
+            <span class="navbar__usuario">{{usuarioLogado.nome}}</span>
+            <form class="navbar__form" method="post" action="/logout">
+                <button class="botao botao--fantasma" type="submit">Sair</button>
+            </form>
+        {{else}}
+            <a class="navbar__link" href="/login">Entrar</a>
+            <a class="botao botao--pequeno" href="/cadastro">Criar conta</a>
+        {{/if}}
+    </nav>
+</header>

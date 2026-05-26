@@ -5,7 +5,6 @@
  *      1. Registra os middlewares base
  *      2. Configura a view engine (hbs)
  *      3. Configura as rotas.
- *
  */
 
 const path = require('path');
@@ -54,13 +53,13 @@ app.get('/', (req, res) => {
 
 // 404
 app.use((req, res) => {
-    res.status(404).send('404 Pagina nao encontrada.');
+    res.status(404).render('erros/404', { titulo: 'Nao encontrado' });
 });
 
 // 500
 app.use((erro, req, res, next) => {
     console.error('Erro nao tratado:', erro.message);
-    res.status(500).send('500 Erro interno do servidor.');
+    res.status(500).render('erros/500', { titulo: 'Erro interno' });
 });
 
 module.exports = app;

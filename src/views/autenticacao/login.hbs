@@ -1,0 +1,39 @@
+{{> cabecalho}}
+
+<section class="cartao cartao--auth">
+    <p class="cartao__supra">Bem-vindo de volta</p>
+    <h1 class="cartao__titulo">Entrar na sua conta</h1>
+
+    {{> flash}}
+
+    <form class="formulario" method="post" action="/login">
+        <label class="campo">
+            <span class="campo__rotulo">Telefone <em>*</em></span>
+            <input
+                class="campo__entrada"
+                type="text"
+                name="telefone"
+                value="{{valores.telefone}}"
+                placeholder="(00) 00000-0000"
+                autocomplete="username">
+        </label>
+
+        <label class="campo">
+            <span class="campo__rotulo">Senha <em>*</em></span>
+            <input
+                class="campo__entrada"
+                type="password"
+                name="senha"
+                placeholder="Sua senha"
+                autocomplete="current-password">
+        </label>
+
+        <button class="botao botao--bloco" type="submit">Entrar</button>
+    </form>
+
+    <p class="cartao__rodape">
+        Ainda não tem conta? <a href="/cadastro">Criar uma agora</a>
+    </p>
+</section>
+
+{{> rodape}}
