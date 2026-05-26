@@ -6,6 +6,7 @@ const Mensagem = require('../classes/Mensagem');
 const { carregarConversaPermitida } = require('../middlewares/Autorizacao');
 const Validador = require('../utils/Validador');
 const Logger = require('../utils/Logger');
+const { ehErroDeFormulario } = require('../utils/ValidacaoWeb');
 
 // Tamanho maximo do conteudo
 const CONTEUDO_MAX = 4000;
@@ -51,6 +52,10 @@ async function enviar(req, res, next) {
     } catch (erro) {
         Logger.error(erro, 'Mensagens.enviar');
 
+        if (!ehErroDeFormulario(erro)) {
+            return next(erro);
+        }
+
         res.flash('erro', erro.message);
         res.redirect('/conversas/' + conversaId);
     }
@@ -76,12 +81,16 @@ async function marcarLida(req, res, next) {
         }
 
         await mensagem.marcarComoLida();
-        
+
         res.flash('sucesso', 'Mensagem marcada como lida.');
         res.redirect('/conversas/' + mensagem.conversaId);
     } catch (erro) {
         Logger.error(erro, 'Mensagens.marcarLida');
-        
+
+        if (!ehErroDeFormulario(erro)) {
+            return next(erro);
+        }
+
         res.flash('erro', erro.message);
         res.redirect('/conversas');
     }
@@ -93,7 +102,7 @@ async function excluir(req, res, next) {
         Validador.validarId(req.params.id);
 
         const mensagem = await Mensagem.buscarPorId(req.params.id);
-        
+
         if (!mensagem) {
             throw new Error('Mensagem não encontrada.');
         }
@@ -113,6 +122,10 @@ async function excluir(req, res, next) {
         res.redirect('/conversas/' + conversaId);
     } catch (erro) {
         Logger.error(erro, 'Mensagens.excluir');
+        
+        if (!ehErroDeFormulario(erro)) {
+            return next(erro);
+        }
         
         res.flash('erro', erro.message);
         res.redirect('/conversas');

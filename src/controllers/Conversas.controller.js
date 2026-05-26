@@ -7,6 +7,7 @@ const Mensagem = require('../classes/Mensagem');
 const Usuario = require('../classes/Usuario');
 const { carregarConversaPermitida } = require('../middlewares/Autorizacao');
 const Logger = require('../utils/Logger');
+const { ehErroDeFormulario } = require('../utils/ValidacaoWeb');
 
 /**
  * Monta um rotulo de exibicao para a conversa.
@@ -90,7 +91,7 @@ async function criar(req, res, next) {
         participantes = [participantes];
     }
 
-    
+
     // Re-exibe o formulario de nova conversa
     async function reexibir(erros) {
         const todos = await Usuario.listarTodos();
@@ -214,6 +215,15 @@ async function abrir(req, res, next) {
             });
         }
 
+        let usuariosDisponiveis = [];
+
+        if (conversa.tipo === 'grupo') {
+            const todos = await Usuario.listarTodos();
+            usuariosDisponiveis = todos
+                .filter((u) => !conversa.temParticipante(u.id))
+                .map((u) => ({ id: u.id, nome: u.nome }));
+        }
+
         res.render('conversas/detalhe', {
             titulo: await rotularConversa(conversa, req.usuario.id),
             conversa: {
@@ -224,9 +234,16 @@ async function abrir(req, res, next) {
             },
             mensagens: listaMensagens,
             participantes,
+            usuariosDisponiveis,
             termoBusca: ''
         });
     } catch (erro) {
+        Logger.error(erro, 'Conversas');
+        
+        if (!ehErroDeFormulario(erro)) {
+            return next(erro);
+        }
+
         res.flash('erro', erro.message);
         res.redirect('/conversas');
     }
@@ -284,6 +301,12 @@ async function buscarMensagens(req, res, next) {
             modoBusca: true
         });
     } catch (erro) {
+        Logger.error(erro, 'Conversas');
+        
+        if (!ehErroDeFormulario(erro)) {
+            return next(erro);
+        }
+
         res.flash('erro', erro.message);
         res.redirect('/conversas');
     }

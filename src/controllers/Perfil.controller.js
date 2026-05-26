@@ -6,28 +6,10 @@ const Usuario = require('../classes/Usuario');
 const Senha = require('../auth/Senha');
 const Validador = require('../utils/Validador');
 const Logger = require('../utils/Logger');
+const { coletarErros, ehErroDeFormulario } = require('../utils/ValidacaoWeb');
 
 const SENHA_MIN = 6;
 const SENHA_MAX = 100;
-
-/**
- * Acumula erros de validacao.
- * Permite mostrar TODAS as falhas de uma vez.
- * 
- * @param {Array<Function>} checagens - funcoes que lancam Error se invalido
- * @returns {string[]} lista de mensagens de erro (vazia se tudo ok)
- */
-function coletarErros(checagens) {
-    const erros = [];
-    for (const checar of checagens) {
-        try {
-            checar();
-        } catch (erro) {
-            erros.push(erro.message);
-        }
-    }
-    return erros;
-}
 
 // GET /perfil
 function formularioPerfil(req, res) {
@@ -139,7 +121,7 @@ async function atualizarPerfil(req, res, next) {
         res.flash('sucesso', 'Perfil atualizado com sucesso.');
         res.redirect('/perfil');
     } catch (erro) {
-        if (/inv.lido|obrigat.rio|cadastrado/i.test(erro.message)) {
+        if (ehErroDeFormulario(erro)) {
             return reexibir([erro.message]);
         }
 
