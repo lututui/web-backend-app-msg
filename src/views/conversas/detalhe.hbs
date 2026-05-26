@@ -44,6 +44,29 @@
                                 <span class="balao__status">{{this.status}}</span>
                             {{/if}}
                         </span>
+                        {{#unless modoBusca}}
+                            <span class="balao__acoes">
+                                {{#if this.ehMinha}}
+                                    <form method="post"
+                                        action="/mensagens/{{this.id}}/excluir">
+                                        <button class="balao__botao" type="submit">
+                                            Excluir
+                                        </button>
+                                    </form>
+                                {{/if}}
+
+                                {{#unless this.ehMinha}}
+                                    {{#unless (ehIgual this.status "lida")}}
+                                        <form method="post"
+                                            action="/mensagens/{{this.id}}/lida">
+                                            <button class="balao__botao" type="submit">
+                                                Marcar como lida
+                                            </button>
+                                        </form>
+                                    {{/unless}}
+                                {{/unless}}
+                            </span>
+                        {{/unless}}
                     </li>
                 {{/each}}
             </ul>

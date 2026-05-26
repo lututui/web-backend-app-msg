@@ -1,9 +1,5 @@
 /**
- * Ponto de entrada do projeto
- *
- * Cumpre dois papéis:
- *  1. Quando importado (require): exporta as classes da biblioteca
- *  2. Quando executado (npm start): roda uma demonstração das funcionalidades
+ * Demonstração do projeto
  */
 
 const Conexao = require('./database/Conexao');
