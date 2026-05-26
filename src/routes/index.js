@@ -9,5 +9,6 @@ router.use(require('./Autenticacao.routes'));
 
 router.use(require('./Conversas.routes'));
 router.use(require('./Mensagens.routes'));
+router.use(require('./Perfil.routes'));
 
 module.exports = router;

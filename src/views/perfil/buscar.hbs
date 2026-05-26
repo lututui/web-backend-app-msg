@@ -1,0 +1,51 @@
+{{> cabecalho}}
+
+<section class="pagina pagina--estreita">
+    <p class="pagina__supra">Pessoas</p>
+    <h1 class="pagina__titulo">Buscar usuarios</h1>
+
+    {{> flash}}
+
+    <form class="busca" method="get" action="/usuarios/buscar">
+        <input class="campo__entrada" type="text" name="q"
+            value="{{termo}}" placeholder="Digite um nome...">
+        <button class="botao botao--pequeno" type="submit">Buscar</button>
+    </form>
+
+    {{#if buscou}}
+        {{#if resultados.length}}
+            <ul class="conversas">
+                {{#each resultados}}
+                    <li class="conversa-item">
+                        <span class="conversa-item__link conversa-item__link--estatico">
+                            <span class="conversa-item__avatar">@</span>
+                            <span class="conversa-item__corpo">
+                                <span class="conversa-item__nome">{{this.nome}}</span>
+                                <span class="conversa-item__meta">{{this.telefone}}</span>
+                            </span>
+                        </span>
+                        <a class="botao botao--pequeno"
+                            href="/conversas/nova">Iniciar conversa</a>
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <div class="vazio">
+                <p class="vazio__titulo">Nenhum usuario encontrado</p>
+                <p class="vazio__texto">
+                    Nao ha usuarios com "{{termo}}" no nome.
+                </p>
+            </div>
+        {{/if}}
+    {{else}}
+        <p class="vazio__texto vazio__texto--centro">
+            Digite um nome no campo acima para procurar usuarios.
+        </p>
+    {{/if}}
+
+    <p class="cartao__rodape">
+        <a href="/conversas">Voltar para as conversas</a>
+    </p>
+</section>
+
+{{> rodape}}

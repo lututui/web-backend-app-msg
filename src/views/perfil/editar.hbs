@@ -1,0 +1,67 @@
+{{> cabecalho}}
+
+<section class="pagina pagina--estreita">
+    <p class="pagina__supra">Conta</p>
+    <h1 class="pagina__titulo">Meu perfil</h1>
+
+    {{> flash}}
+
+    <form class="formulario" method="post" action="/perfil">
+        <label class="campo">
+            <span class="campo__rotulo">Nome <em>*</em></span>
+            <input class="campo__entrada" type="text" name="nome"
+                value="{{valores.nome}}" placeholder="Seu nome">
+        </label>
+
+        <label class="campo">
+            <span class="campo__rotulo">Telefone <em>*</em></span>
+            <input class="campo__entrada" type="text" name="telefone"
+                value="{{valores.telefone}}" placeholder="(00) 00000-0000">
+        </label>
+
+        <label class="campo">
+            <span class="campo__rotulo">
+                E-mail <span class="campo__opcional">(opcional)</span>
+            </span>
+            <input class="campo__entrada" type="text" name="email"
+                value="{{valores.email}}" placeholder="voce@exemplo.com">
+        </label>
+
+        <fieldset class="campo bloco-senha">
+            <legend class="campo__rotulo">Alterar senha</legend>
+            <p class="campo__ajuda">
+                Deixe os tres campos em branco para manter a senha atual.
+            </p>
+
+            <label class="campo">
+                <span class="campo__rotulo">Senha atual</span>
+                <input class="campo__entrada" type="password"
+                    name="senhaAtual" placeholder="Sua senha atual"
+                    autocomplete="current-password">
+            </label>
+
+            <div class="campo__dupla">
+                <label class="campo">
+                    <span class="campo__rotulo">Nova senha</span>
+                    <input class="campo__entrada" type="password"
+                        name="novaSenha" placeholder="Minimo 6 caracteres"
+                        autocomplete="new-password">
+                </label>
+                <label class="campo">
+                    <span class="campo__rotulo">Confirmar nova senha</span>
+                    <input class="campo__entrada" type="password"
+                        name="confirmacaoNovaSenha" placeholder="Repita a nova senha"
+                        autocomplete="new-password">
+                </label>
+            </div>
+        </fieldset>
+
+        <button class="botao botao--bloco" type="submit">Salvar alteracoes</button>
+    </form>
+
+    <p class="cartao__rodape">
+        <a href="/conversas">Voltar para as conversas</a>
+    </p>
+</section>
+
+{{> rodape}}
