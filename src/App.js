@@ -33,6 +33,24 @@ app.set('view engine', 'hbs');
 app.set('views', DIR_VIEWS);
 hbs.registerPartials(DIR_PARTIALS);
 
+hbs.registerHelper('ehIgual', function (a, b) {
+    return String(a) === String(b);
+});
+
+hbs.registerHelper('ehGrupo', function (tipo) {
+    return tipo === 'grupo';
+});
+
+hbs.registerHelper('incluiId', function (lista, id) {
+    if (!Array.isArray(lista)) {
+        return String(lista) === String(id);
+    }
+    return lista.some(function (item) {
+        return String(item) === String(id);
+    });
+});
+
+
 app.use(sessao);
 
 app.use(flash);

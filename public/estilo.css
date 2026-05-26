@@ -17,7 +17,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    font-family: 'Outfit', sans-serif;
+    font-family: sans-serif;
     color: var(--tinta);
     background: var(--fundo);
     background-image:
@@ -175,7 +175,7 @@ body {
 
 .botao {
     display: inline-block;
-    font-family: 'Outfit', sans-serif;
+    font-family: sans-serif;
     font-weight: 600;
     font-size: 0.98rem;
     padding: 0.72rem 1.4rem;

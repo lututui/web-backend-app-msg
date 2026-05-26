@@ -7,4 +7,6 @@ const router = express.Router();
 
 router.use(require('./Autenticacao.routes'));
 
+router.use(require('./Conversas.routes'));
+
 module.exports = router;

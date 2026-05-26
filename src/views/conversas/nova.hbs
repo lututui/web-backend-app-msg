@@ -1,0 +1,70 @@
+{{> cabecalho}}
+
+<section class="pagina pagina--estreita">
+    <p class="pagina__supra">Iniciar</p>
+    <h1 class="pagina__titulo">Nova conversa</h1>
+
+    {{> flash}}
+
+    {{#if usuarios.length}}
+        <form class="formulario" method="post" action="/conversas">
+            <fieldset class="campo">
+                <legend class="campo__rotulo">Tipo <em>*</em></legend>
+                <label class="opcao">
+                    <input type="radio" name="tipo" value="individual"
+                        {{#if (ehIgual valores.tipo "individual")}}checked{{/if}}>
+                    Individual — conversa com um contato
+                </label>
+                <label class="opcao">
+                    <input type="radio" name="tipo" value="grupo"
+                        {{#if (ehIgual valores.tipo "grupo")}}checked{{/if}}>
+                    Grupo — vários participantes
+                </label>
+            </fieldset>
+
+            <label class="campo">
+                <span class="campo__rotulo">
+                    Nome do grupo
+                    <span class="campo__opcional">(somente para grupos)</span>
+                </span>
+                <input class="campo__entrada" type="text" name="nome"
+                    value="{{valores.nome}}" placeholder="Ex.: Trabalho de Back-End">
+            </label>
+
+            <div class="campo">
+                <span class="campo__rotulo">Participantes <em>*</em></span>
+                <p class="campo__ajuda">
+                    Para conversa individual, selecione apenas um contato.
+                </p>
+                <div class="lista-selecao">
+                    {{#each usuarios}}
+                        <label class="opcao opcao--linha">
+                            <input type="checkbox" name="participantes"
+                                value="{{this.id}}"
+                                {{#if (incluiId ../valores.participantes this.id)}}checked{{/if}}>
+                            <span>
+                                <strong>{{this.nome}}</strong>
+                                <span class="opcao__sub">{{this.telefone}}</span>
+                            </span>
+                        </label>
+                    {{/each}}
+                </div>
+            </div>
+
+            <button class="botao botao--bloco" type="submit">Criar conversa</button>
+        </form>
+    {{else}}
+        <div class="vazio">
+            <p class="vazio__titulo">Nenhum outro usuário cadastrado</p>
+            <p class="vazio__texto">
+                É preciso haver outro usuário no sistema para iniciar uma conversa.
+            </p>
+        </div>
+    {{/if}}
+
+    <p class="cartao__rodape">
+        <a href="/conversas">Voltar para as conversas</a>
+    </p>
+</section>
+
+{{> rodape}}

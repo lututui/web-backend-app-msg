@@ -1,0 +1,117 @@
+{{> cabecalho}}
+
+<section class="pagina">
+    <div class="pagina__topo">
+        <div>
+            <p class="pagina__supra">
+                {{#if conversa.ehGrupo}}Grupo{{else}}Conversa{{/if}}
+            </p>
+            <h1 class="pagina__titulo">{{conversa.rotulo}}</h1>
+        </div>
+        <a class="botao botao--fantasma" href="/conversas">Voltar</a>
+    </div>
+
+    {{> flash}}
+
+    <form class="busca" method="get" action="/conversas/{{conversa.id}}/buscar">
+        <input class="campo__entrada" type="text" name="q"
+            value="{{termoBusca}}" placeholder="Buscar nas mensagens...">
+        <button class="botao botao--pequeno" type="submit">Buscar</button>
+        {{#if modoBusca}}
+            <a class="botao botao--fantasma botao--pequeno"
+                href="/conversas/{{conversa.id}}">Limpar</a>
+        {{/if}}
+    </form>
+
+    {{#if modoBusca}}
+        <p class="aviso aviso--info">
+            Resultados da busca por "{{termoBusca}}" — {{mensagens.length}} mensagem(ns).
+        </p>
+    {{/if}}
+
+    <div class="conversa-painel">
+        {{#if mensagens.length}}
+            <ul class="mensagens-lista">
+                {{#each mensagens}}
+                    <li class="balao {{#if this.ehMinha}}balao--minha{{else}}balao--outra{{/if}}">
+                        {{#unless this.ehMinha}}
+                            <span class="balao__autor">{{this.remetenteNome}}</span>
+                        {{/unless}}
+                        <span class="balao__texto">{{this.conteudo}}</span>
+                        <span class="balao__rodape">
+                            <span class="balao__hora">{{this.timestamp}}</span>
+                            {{#if this.ehMinha}}
+                                <span class="balao__status">{{this.status}}</span>
+                            {{/if}}
+                        </span>
+                    </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p class="vazio__texto vazio__texto--centro">
+                {{#if modoBusca}}
+                    Nenhuma mensagem encontrada para esse termo.
+                {{else}}
+                    Nenhuma mensagem ainda. Seja o primeiro a escrever.
+                {{/if}}
+            </p>
+        {{/if}}
+    </div>
+
+    {{#unless modoBusca}}
+        <form class="envio" method="post"
+            action="/conversas/{{conversa.id}}/mensagens">
+            <input class="campo__entrada envio__campo" type="text"
+                name="conteudo" placeholder="Escreva uma mensagem..."
+                autocomplete="off">
+            <button class="botao" type="submit">Enviar</button>
+        </form>
+    {{/unless}}
+
+    {{#if conversa.ehGrupo}}
+        {{#unless modoBusca}}
+            <div class="grupo-painel">
+                <h2 class="grupo-painel__titulo">Participantes</h2>
+                <ul class="grupo-painel__lista">
+                    {{#each participantes}}
+                        <li class="grupo-painel__item">
+                            <span>
+                                {{this.nome}}
+                                {{#if this.ehEu}}<em>(você)</em>{{/if}}
+                            </span>
+                            {{#unless this.ehEu}}
+                                <form method="post"
+                                    action="/conversas/{{../conversa.id}}/participantes/remover">
+                                    <input type="hidden" name="usuarioId"
+                                        value="{{this.id}}">
+                                    <button class="botao botao--fantasma botao--pequeno"
+                                        type="submit">Remover</button>
+                                </form>
+                            {{/unless}}
+                        </li>
+                    {{/each}}
+                </ul>
+
+                <form class="grupo-painel__add" method="post"
+                    action="/conversas/{{conversa.id}}/participantes">
+                    <input class="campo__entrada" type="text" name="usuarioId"
+                        placeholder="ID do usuário a adicionar">
+                    <button class="botao botao--pequeno" type="submit">
+                        Adicionar
+                    </button>
+                </form>
+            </div>
+        {{/unless}}
+    {{/if}}
+
+    {{#unless modoBusca}}
+        <form class="acao-perigo" method="post"
+            action="/conversas/{{conversa.id}}/excluir">
+            <button class="botao botao--perigo" type="submit">
+                Excluir conversa
+            </button>
+        </form>
+    {{/unless}}
+</section>
+
+{{> rodape}}

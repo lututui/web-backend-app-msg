@@ -1,0 +1,47 @@
+{{> cabecalho}}
+
+<section class="pagina">
+    <div class="pagina__topo">
+        <div>
+            <p class="pagina__supra">Suas conversas</p>
+            <h1 class="pagina__titulo">Mensagens</h1>
+        </div>
+        <a class="botao" href="/conversas/nova">Nova conversa</a>
+    </div>
+
+    {{> flash}}
+
+    {{#if conversas.length}}
+        <ul class="conversas">
+            {{#each conversas}}
+                <li class="conversa-item">
+                    <a class="conversa-item__link" href="/conversas/{{this.id}}">
+                        <span class="conversa-item__avatar">
+                            {{#if (ehGrupo this.tipo)}}#{{else}}@{{/if}}
+                        </span>
+                        <span class="conversa-item__corpo">
+                            <span class="conversa-item__nome">{{this.rotulo}}</span>
+                            <span class="conversa-item__meta">
+                                {{#if (ehGrupo this.tipo)}}
+                                    Grupo · {{this.qtdParticipantes}} participantes
+                                {{else}}
+                                    Conversa individual
+                                {{/if}}
+                            </span>
+                        </span>
+                    </a>
+                </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <div class="vazio">
+            <p class="vazio__titulo">Nenhuma conversa ainda</p>
+            <p class="vazio__texto">
+                Crie a sua primeira conversa para começar a trocar mensagens.
+            </p>
+            <a class="botao" href="/conversas/nova">Iniciar conversa</a>
+        </div>
+    {{/if}}
+</section>
+
+{{> rodape}}
