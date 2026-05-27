@@ -25,13 +25,32 @@ async function cadastrar(req, res) {
     const valores = { nome, telefone, email };
 
     // Validacao dos campos
+    // Validacao por campo: so checa tamanho se o campo foi preenchido.
+    // Senao, o mesmo campo vazio gera duas mensagens iguais.
     const erros = coletarErros([
         () => Validador.validarCampoObrigatorio(nome, 'nome'),
-        () => Validador.validarTamanho(nome, 2, 100, 'nome'),
-        () => Validador.validarTelefone(telefone),
+        () => Validador.validarCampoObrigatorio(telefone, 'telefone'),
         () => Validador.validarCampoObrigatorio(senha, 'senha'),
-        () => Validador.validarTamanho(senha, SENHA_MIN, SENHA_MAX, 'senha')
+        () => Validador.validarCampoObrigatorio(
+            confirmacaoSenha, 'confirmação de senha'
+        )
     ]);
+
+    // Validacoes de formato/tamanho rodam so se os campos foram preenchidos.
+    if (nome && nome.length > 0) {
+        try { Validador.validarTamanho(nome, 2, 100, 'nome'); }
+        catch (e) { erros.push(e.message); }
+    }
+
+    if (telefone && telefone.length > 0) {
+        try { Validador.validarTelefone(telefone); }
+        catch (e) { erros.push(e.message); }
+    }
+
+    if (senha && senha.length > 0) {
+        try { Validador.validarTamanho(senha, SENHA_MIN, SENHA_MAX, 'senha'); }
+        catch (e) { erros.push(e.message); }
+    }
 
     // Email opcional
     if (email && email.trim().length > 0) {
@@ -43,7 +62,7 @@ async function cadastrar(req, res) {
     }
 
     // Senha e confirmacao
-    if (senha && senha !== confirmacaoSenha) {
+    if (senha && confirmacaoSenha && senha !== confirmacaoSenha) {
         erros.push('A senha e a confirmação não coincidem.');
     }
 
@@ -129,7 +148,7 @@ async function logar(req, res) {
     });
 
     req.session.usuarioId = String(usuario.id);
-    
+
     Logger.info(
         `Login efetuado: ${usuario.nome} (${usuario.id})`,
         'Autenticacao.logar'
