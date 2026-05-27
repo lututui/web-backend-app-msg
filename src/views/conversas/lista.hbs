@@ -6,7 +6,10 @@
             <p class="pagina__supra">Suas conversas</p>
             <h1 class="pagina__titulo">Mensagens</h1>
         </div>
-        <a class="botao" href="/conversas/nova">Nova conversa</a>
+        <div class="pagina__acoes">
+            <a class="botao" href="/conversas/nova">Nova conversa</a>
+            <a class="botao botao--secundario" href="/conversas/grupo">Novo grupo</a>
+        </div>
     </div>
 
     {{> flash}}
@@ -39,7 +42,6 @@
             <p class="vazio__texto">
                 Crie a sua primeira conversa para começar a trocar mensagens.
             </p>
-            <a class="botao" href="/conversas/nova">Iniciar conversa</a>
         </div>
     {{/if}}
 </section>

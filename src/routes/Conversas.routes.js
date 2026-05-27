@@ -14,7 +14,8 @@ router.use(exigirLogin);
 router.get('/conversas', asyncHandler(ctrl.listar));
 router.post('/conversas', asyncHandler(ctrl.criar));
 
-router.get('/conversas/nova', asyncHandler(ctrl.formularioNova));
+router.get('/conversas/nova', asyncHandler(ctrl.formularioNovaIndividual));
+router.get('/conversas/grupo', asyncHandler(ctrl.formularioNovoGrupo));
 
 router.get('/conversas/:id', asyncHandler(ctrl.abrir));
 router.get('/conversas/:id/buscar', asyncHandler(ctrl.buscarMensagens));

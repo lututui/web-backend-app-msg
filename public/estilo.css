@@ -741,3 +741,19 @@ body {
     max-height: 260px;
     overflow-y: auto;
 }
+
+.pagina__acoes {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.botao--secundario {
+    background: var(--papel);
+    color: var(--marca);
+    border: 1px solid var(--borda);
+}
+
+.botao--secundario:hover {
+    background: var(--fundo);
+    border-color: var(--marca-clara);
+}

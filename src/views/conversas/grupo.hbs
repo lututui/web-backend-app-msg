@@ -1,0 +1,54 @@
+{{> cabecalho}}
+
+<section class="pagina pagina--estreita">
+    <p class="pagina__supra">Iniciar</p>
+    <h1 class="pagina__titulo">Novo grupo</h1>
+
+    {{> flash}}
+
+    {{#if usuarios.length}}
+    <form class="formulario" method="post" action="/conversas">
+        <input type="hidden" name="tipo" value="grupo">
+
+        <label class="campo">
+            <span class="campo__rotulo">Nome do grupo <em>*</em></span>
+            <input class="campo__entrada" type="text" name="nome" value="{{valores.nome}}"
+                placeholder="Ex.: Trabalho de Back-End">
+        </label>
+
+        <div class="campo">
+            <span class="campo__rotulo">Participantes <em>*</em></span>
+            <p class="campo__ajuda">
+                Selecione um ou mais participantes para o grupo.
+            </p>
+            <div class="lista-selecao">
+                {{#each usuarios}}
+                <label class="opcao opcao--linha">
+                    <input type="checkbox" name="participantes" value="{{this.id}}" {{#if (incluiId
+                        ../valores.participantes this.id)}}checked{{/if}}>
+                    <span>
+                        <strong>{{this.nome}}</strong>
+                        <span class="opcao__sub">{{this.telefone}}</span>
+                    </span>
+                </label>
+                {{/each}}
+            </div>
+        </div>
+
+        <button class="botao botao--bloco" type="submit">Criar grupo</button>
+    </form>
+    {{else}}
+    <div class="vazio">
+        <p class="vazio__titulo">Nenhum outro usuário cadastrado</p>
+        <p class="vazio__texto">
+            É preciso haver outro usuário no sistema para criar um grupo.
+        </p>
+    </div>
+    {{/if}}
+
+    <p class="cartao__rodape">
+        <a href="/conversas">Voltar para as conversas</a>
+    </p>
+</section>
+
+{{> rodape}}

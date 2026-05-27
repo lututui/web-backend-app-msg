@@ -8,38 +8,17 @@
 
     {{#if usuarios.length}}
         <form class="formulario" method="post" action="/conversas">
-            <fieldset class="campo">
-                <legend class="campo__rotulo">Tipo <em>*</em></legend>
-                <label class="opcao">
-                    <input type="radio" name="tipo" value="individual"
-                        {{#if (ehIgual valores.tipo "individual")}}checked{{/if}}>
-                    Individual — conversa com um contato
-                </label>
-                <label class="opcao">
-                    <input type="radio" name="tipo" value="grupo"
-                        {{#if (ehIgual valores.tipo "grupo")}}checked{{/if}}>
-                    Grupo — vários participantes
-                </label>
-            </fieldset>
-
-            <label class="campo">
-                <span class="campo__rotulo">
-                    Nome do grupo
-                    <span class="campo__opcional">(somente para grupos)</span>
-                </span>
-                <input class="campo__entrada" type="text" name="nome"
-                    value="{{valores.nome}}" placeholder="Ex.: Trabalho de Back-End">
-            </label>
+            <input type="hidden" name="tipo" value="individual">
 
             <div class="campo">
-                <span class="campo__rotulo">Participantes <em>*</em></span>
+                <span class="campo__rotulo">Contato <em>*</em></span>
                 <p class="campo__ajuda">
-                    Para conversa individual, selecione apenas um contato.
+                    Escolha com quem você quer conversar.
                 </p>
                 <div class="lista-selecao">
                     {{#each usuarios}}
                         <label class="opcao opcao--linha">
-                            <input type="checkbox" name="participantes"
+                            <input type="radio" name="participantes"
                                 value="{{this.id}}"
                                 {{#if (incluiId ../valores.participantes this.id)}}checked{{/if}}>
                             <span>
@@ -51,7 +30,7 @@
                 </div>
             </div>
 
-            <button class="botao botao--bloco" type="submit">Criar conversa</button>
+            <button class="botao botao--bloco" type="submit">Iniciar conversa</button>
         </form>
     {{else}}
         <div class="vazio">

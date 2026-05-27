@@ -60,7 +60,7 @@ async function listar(req, res) {
 }
 
 // GET /conversas/nova
-async function formularioNova(req, res) {
+async function formularioNovaIndividual(req, res) {
     const todos = await Usuario.listarTodos();
     const outros = todos
         .filter((u) => u.id.toString() !== String(req.usuario.id))
@@ -68,6 +68,20 @@ async function formularioNova(req, res) {
 
     res.render('conversas/nova', {
         titulo: 'Nova conversa',
+        usuarios: outros,
+        valores: {}
+    });
+}
+
+// GET /conversas/grupo — formulario de novo GRUPO
+async function formularioNovoGrupo(req, res) {
+    const todos = await Usuario.listarTodos();
+    const outros = todos
+        .filter((u) => u.id.toString() !== String(req.usuario.id))
+        .map((u) => ({ id: u.id, nome: u.nome, telefone: u.telefone }));
+
+    res.render('conversas/grupo', {
+        titulo: 'Novo grupo',
         usuarios: outros,
         valores: {}
     });
@@ -91,8 +105,11 @@ async function criar(req, res) {
             .filter((u) => u.id.toString() !== String(req.usuario.id))
             .map((u) => ({ id: u.id, nome: u.nome, telefone: u.telefone }));
 
-        return res.status(400).render('conversas/nova', {
-            titulo: 'Nova conversa',
+        const template = tipo === 'grupo' ? 'conversas/grupo' : 'conversas/nova';
+        const titulo = tipo === 'grupo' ? 'Novo grupo' : 'Nova conversa';
+
+        return res.status(400).render(template, {
+            titulo,
             usuarios: outros,
             erros,
             valores: { tipo, nome, participantes }
@@ -366,7 +383,8 @@ async function excluir(req, res) {
 
 module.exports = {
     listar,
-    formularioNova,
+    formularioNovaIndividual,
+    formularioNovoGrupo,
     criar,
     abrir,
     buscarMensagens,
