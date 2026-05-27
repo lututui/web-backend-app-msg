@@ -1,6 +1,6 @@
 {{> cabecalho}}
 
-<section class="pagina">
+<section class="pagina pagina--conversa">
     <div class="pagina__topo">
         <div>
             <p class="pagina__supra">
@@ -136,5 +136,14 @@
         </form>
     {{/unless}}
 </section>
+
+<script>
+    (function () {
+        var painel = document.querySelector('.conversa-painel');
+        if (painel) {
+            painel.scrollTop = painel.scrollHeight;
+        }
+    })();
+</script>
 
 {{> rodape}}
