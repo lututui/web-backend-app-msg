@@ -14,135 +14,249 @@
     {{> flash}}
 
     <form class="busca" method="get" action="/conversas/{{conversa.id}}/buscar">
-        <input class="campo__entrada" type="text" name="q"
-            value="{{termoBusca}}" placeholder="Buscar nas mensagens...">
+        <input class="campo__entrada" type="text" name="q" value="{{termoBusca}}" placeholder="Buscar nas mensagens...">
         <button class="botao botao--pequeno" type="submit">Buscar</button>
         {{#if modoBusca}}
-            <a class="botao botao--fantasma botao--pequeno"
-                href="/conversas/{{conversa.id}}">Limpar</a>
+        <a class="botao botao--fantasma botao--pequeno" href="/conversas/{{conversa.id}}">Limpar</a>
         {{/if}}
     </form>
 
     {{#if modoBusca}}
-        <p class="aviso aviso--info">
-            Resultados da busca por "{{termoBusca}}" — {{mensagens.length}} mensagem(ns).
-        </p>
+    <p class="aviso aviso--info">
+        Resultados da busca por "{{termoBusca}}" — {{mensagens.length}} mensagem(ns).
+    </p>
     {{/if}}
 
     <div class="conversa-painel">
         {{#if mensagens.length}}
-            <ul class="mensagens-lista">
-                {{#each mensagens}}
-                    <li class="balao {{#if this.ehMinha}}balao--minha{{else}}balao--outra{{/if}}">
-                        {{#unless this.ehMinha}}
-                            <span class="balao__autor">{{this.remetenteNome}}</span>
-                        {{/unless}}
-                        <span class="balao__texto">{{this.conteudo}}</span>
-                        <span class="balao__rodape">
-                            <span class="balao__hora">{{horaCurta this.timestamp}}</span>
-                            {{#if this.ehMinha}}
-                                <span class="balao__status">{{this.status}}</span>
-                            {{/if}}
-                        </span>
-                        {{#unless modoBusca}}
-                            <span class="balao__acoes">
-                                {{#if this.ehMinha}}
-                                    <form method="post"
-                                        action="/mensagens/{{this.id}}/excluir">
-                                        <button class="balao__botao" type="submit">
-                                            Excluir
-                                        </button>
-                                    </form>
-                                {{/if}}
+        <ul class="mensagens-lista">
+            {{#each mensagens}}
+            <li class="balao {{#if this.ehMinha}}balao--minha{{else}}balao--outra{{/if}}" data-id="{{this.id}}">
+                {{#unless this.ehMinha}}
+                <span class="balao__autor">{{this.remetenteNome}}</span>
+                {{/unless}}
+                <span class="balao__texto">{{this.conteudo}}</span>
+                <span class="balao__rodape">
+                    <span class="balao__hora" data-hora="{{this.timestamp}}"></span>
+                    {{#if this.ehMinha}}
+                    <span class="balao__status">{{this.status}}</span>
+                    {{/if}}
+                </span>
+                {{#unless modoBusca}}
+                <span class="balao__acoes">
+                    {{#if this.ehMinha}}
+                    <form method="post" action="/mensagens/{{this.id}}/excluir">
+                        <button class="balao__botao" type="submit">
+                            Excluir
+                        </button>
+                    </form>
+                    {{/if}}
 
-                                {{#unless this.ehMinha}}
-                                    {{#unless (ehIgual this.status "lida")}}
-                                        <form method="post"
-                                            action="/mensagens/{{this.id}}/lida">
-                                            <button class="balao__botao" type="submit">
-                                                Marcar como lida
-                                            </button>
-                                        </form>
-                                    {{/unless}}
-                                {{/unless}}
-                            </span>
-                        {{/unless}}
-                    </li>
-                {{/each}}
-            </ul>
+                    {{#unless this.ehMinha}}
+                    {{#unless (ehIgual this.status "lida")}}
+                    <form method="post" action="/mensagens/{{this.id}}/lida">
+                        <button class="balao__botao" type="submit">
+                            Marcar como lida
+                        </button>
+                    </form>
+                    {{/unless}}
+                    {{/unless}}
+                </span>
+                {{/unless}}
+            </li>
+            {{/each}}
+        </ul>
         {{else}}
-            <p class="vazio__texto vazio__texto--centro">
-                {{#if modoBusca}}
-                    Nenhuma mensagem encontrada para esse termo.
-                {{else}}
-                    Nenhuma mensagem ainda. Seja o primeiro a escrever.
-                {{/if}}
-            </p>
+        <p class="vazio__texto vazio__texto--centro">
+            {{#if modoBusca}}
+            Nenhuma mensagem encontrada para esse termo.
+            {{else}}
+            Nenhuma mensagem ainda. Seja o primeiro a escrever.
+            {{/if}}
+        </p>
         {{/if}}
     </div>
 
     {{#unless modoBusca}}
-        <form class="envio" method="post"
-            action="/conversas/{{conversa.id}}/mensagens">
-            <input class="campo__entrada envio__campo" type="text"
-                name="conteudo" placeholder="Escreva uma mensagem..."
-                autocomplete="off">
-            <button class="botao" type="submit">Enviar</button>
-        </form>
+    <form class="envio" method="post" action="/conversas/{{conversa.id}}/mensagens">
+        <input class="campo__entrada envio__campo" type="text" name="conteudo" placeholder="Escreva uma mensagem..."
+            autocomplete="off">
+        <button class="botao" type="submit">Enviar</button>
+    </form>
     {{/unless}}
 
     {{#if conversa.ehGrupo}}
-        {{#unless modoBusca}}
-            <div class="grupo-painel">
-                <h2 class="grupo-painel__titulo">Participantes</h2>
-                <ul class="grupo-painel__lista">
-                    {{#each participantes}}
-                        <li class="grupo-painel__item">
-                            <span>
-                                {{this.nome}}
-                                {{#if this.ehEu}}<em>(você)</em>{{/if}}
-                            </span>
-                            {{#unless this.ehEu}}
-                                <form method="post"
-                                    action="/conversas/{{../conversa.id}}/participantes/remover">
-                                    <input type="hidden" name="usuarioId"
-                                        value="{{this.id}}">
-                                    <button class="botao botao--fantasma botao--pequeno"
-                                        type="submit">Remover</button>
-                                </form>
-                            {{/unless}}
-                        </li>
-                    {{/each}}
-                </ul>
-
-                <form class="grupo-painel__add" method="post"
-                    action="/conversas/{{conversa.id}}/participantes">
-                    <input class="campo__entrada" type="text" name="usuarioId"
-                        placeholder="ID do usuário a adicionar">
-                    <button class="botao botao--pequeno" type="submit">
-                        Adicionar
-                    </button>
+    {{#unless modoBusca}}
+    <div class="grupo-painel">
+        <h2 class="grupo-painel__titulo">Participantes</h2>
+        <ul class="grupo-painel__lista">
+            {{#each participantes}}
+            <li class="grupo-painel__item">
+                <span>
+                    {{this.nome}}
+                    {{#if this.ehEu}}<em>(você)</em>{{/if}}
+                </span>
+                {{#unless this.ehEu}}
+                <form method="post" action="/conversas/{{../conversa.id}}/participantes/remover">
+                    <input type="hidden" name="usuarioId" value="{{this.id}}">
+                    <button class="botao botao--fantasma botao--pequeno" type="submit">Remover</button>
                 </form>
-            </div>
-        {{/unless}}
+                {{/unless}}
+            </li>
+            {{/each}}
+        </ul>
+
+        <form class="grupo-painel__add" method="post" action="/conversas/{{conversa.id}}/participantes">
+            <input class="campo__entrada" type="text" name="usuarioId" placeholder="ID do usuário a adicionar">
+            <button class="botao botao--pequeno" type="submit">
+                Adicionar
+            </button>
+        </form>
+    </div>
+    {{/unless}}
     {{/if}}
 
     {{#unless modoBusca}}
-        <form class="acao-perigo" method="post"
-            action="/conversas/{{conversa.id}}/excluir">
-            <button class="botao botao--perigo" type="submit">
-                Excluir conversa
-            </button>
-        </form>
+    <form class="acao-perigo" method="post" action="/conversas/{{conversa.id}}/excluir">
+        <button class="botao botao--perigo" type="submit">
+            Excluir conversa
+        </button>
+    </form>
     {{/unless}}
 </section>
 
 <script>
     (function () {
         var painel = document.querySelector('.conversa-painel');
-        if (painel) {
+        var lista = document.querySelector('.mensagens-lista');
+        var conversaId = '{{conversa.id}}';
+        if (!painel || !conversaId) {
+            return;
+        }
+
+        function rolarParaFim() {
             painel.scrollTop = painel.scrollHeight;
         }
+
+        function escapar(texto) {
+            var div = document.createElement('div');
+            div.textContent = texto == null ? '' : String(texto);
+            return div.innerHTML;
+        }
+
+        function formatarHora(valor) {
+            if (!valor) {
+                return '';
+            }
+
+            var data = new Date(valor);
+
+            if (isNaN(data.getTime())) {
+                return '';
+            }
+
+            function dois(n) {
+                return String(n).padStart(2, '0');
+            }
+
+            var hora = dois(data.getHours()) + ':' + dois(data.getMinutes());
+            var hoje = new Date();
+            var mesmoDia =
+                data.getDate() === hoje.getDate() &&
+                data.getMonth() === hoje.getMonth() &&
+                data.getFullYear() === hoje.getFullYear();
+
+            if (mesmoDia) {
+                return hora;
+            }
+
+            return dois(data.getDate()) + '/' + dois(data.getMonth() + 1) +
+                ' ' + hora;
+        }
+
+        function criarBalao(msg) {
+            var li = document.createElement('li');
+            li.className = 'balao ' + (msg.ehMinha ? 'balao--minha' : 'balao--outra');
+            li.setAttribute('data-id', msg.id);
+
+            var html = '';
+
+            if (!msg.ehMinha) {
+                html += '<span class="balao__autor">' +
+                    escapar(msg.remetenteNome) + '</span>';
+            }
+
+            html += '<span class="balao__texto">' + escapar(msg.conteudo) + '</span>';
+            html += '<span class="balao__rodape">' +
+                '<span class="balao__hora">' + formatarHora(msg.timestamp) + '</span>';
+
+            if (msg.ehMinha) {
+                html += '<span class="balao__status">' +
+                    escapar(msg.status) + '</span>';
+            }
+
+            html += '</span>';
+            li.innerHTML = html;
+
+            return li;
+        }
+
+        function buscarNovas() {
+            fetch('/api/conversas/' + conversaId + '/mensagens', {
+                headers: { 'Accept': 'application/json' }
+            })
+                .then(function (resp) {
+                    if (!resp.ok) {
+                        throw new Error('HTTP ' + resp.status);
+                    }
+
+                    return resp.json();
+                })
+                .then(function (dados) {
+                    if (!dados.ok || !lista) {
+                        return;
+                    }
+
+                    var perto =
+                        painel.scrollHeight - painel.scrollTop -
+                        painel.clientHeight < 60;
+                    var adicionou = false;
+
+                    dados.mensagens.forEach(function (msg) {
+                        var existe = lista.querySelector(
+                            '[data-id="' + msg.id + '"]'
+                        );
+
+                        if (!existe) {
+                            lista.appendChild(criarBalao(msg));
+                            adicionou = true;
+                        }
+                    });
+
+                    if (adicionou && perto) {
+                        rolarParaFim();
+                    }
+                })
+                .catch(function () {
+                    // Falha de rede: ignora silenciosamente
+                });
+        }
+
+        function formatarHorasExistentes() {
+            var spans = document.querySelectorAll('.balao__hora[data-hora]');
+
+            spans.forEach(function (span) {
+                span.textContent = formatarHora(span.getAttribute('data-hora'));
+            });
+        }
+
+        formatarHorasExistentes();
+
+        rolarParaFim();
+        {{#unless modoBusca}}
+        // Consulta a cada 4 segundos.
+        setInterval(buscarNovas, 4000);
+        {{/unless}}
     })();
 </script>
 
