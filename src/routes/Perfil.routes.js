@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../controllers/Perfil.controller');
-const asyncHandler = require('../middlewares/asyncHandler');
+const asyncHandler = require('../middlewares/AsyncHandler');
 const { exigirLogin } = require('../middlewares/Autenticacao');
 
 router.use(exigirLogin);

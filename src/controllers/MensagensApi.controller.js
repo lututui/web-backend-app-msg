@@ -11,6 +11,7 @@ const Usuario = require('../classes/Usuario');
 const { carregarConversaPermitida } = require('../middlewares/Autorizacao');
 const { ehErroDeFormulario } = require('../utils/ValidacaoWeb');
 const Logger = require('../utils/Logger');
+const ResolvedorNomes = require('../utils/ResolvedorNomes');
 
 
 // GET /api/conversas/:id/mensagens
@@ -25,16 +26,7 @@ async function listarJson(req, res) {
 
         const nomes = {};
         
-        async function nomeDe(id) {
-            const chave = String(id);
-
-            if (!nomes[chave]) {
-                const u = await Usuario.buscarPorId(id);
-                nomes[chave] = u ? u.nome : 'Usuário removido';
-            }
-
-            return nomes[chave];
-        }
+        const nomeDe = ResolvedorNomes.criar();
 
         const lista = [];
         for (const m of mensagens) {

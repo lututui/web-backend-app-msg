@@ -5,7 +5,6 @@
 const Usuario = require('../classes/Usuario');
 const Senha = require('../auth/Senha');
 const Validador = require('../utils/Validador');
-const Logger = require('../utils/Logger');
 const { coletarErros, ehErroDeFormulario } = require('../utils/ValidacaoWeb');
 
 const SENHA_MIN = 6;

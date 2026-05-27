@@ -8,6 +8,7 @@ const Usuario = require('../classes/Usuario');
 const { carregarConversaPermitida } = require('../middlewares/Autorizacao');
 const Logger = require('../utils/Logger');
 const { ehErroDeFormulario } = require('../utils/ValidacaoWeb');
+const ResolvedorNomes = require('../utils/ResolvedorNomes');
 
 /**
  * Monta um rotulo de exibicao para a conversa.
@@ -187,16 +188,7 @@ async function abrir(req, res) {
 
         const mensagens = await Mensagem.buscarPorConversa(conversa.id);
 
-        // Cache de nomes
-        const nomes = {};
-        async function nomeDe(id) {
-            const chave = String(id);
-            if (!nomes[chave]) {
-                const u = await Usuario.buscarPorId(id);
-                nomes[chave] = u ? u.nome : 'Usuário removido';
-            }
-            return nomes[chave];
-        }
+        const nomeDe = ResolvedorNomes.criar();
 
         const listaMensagens = [];
         for (const m of mensagens) {
@@ -231,13 +223,15 @@ async function abrir(req, res) {
                 .map((u) => ({ id: u.id, nome: u.nome }));
         }
 
+        const rotulo = await rotularConversa(conversa, req.usuario.id);
+
         res.render('conversas/detalhe', {
-            titulo: await rotularConversa(conversa, req.usuario.id),
+            titulo: rotulo,
             conversa: {
                 id: conversa.id,
                 tipo: conversa.tipo,
                 ehGrupo: conversa.tipo === 'grupo',
-                rotulo: await rotularConversa(conversa, req.usuario.id)
+                rotulo: rotulo
             },
             mensagens: listaMensagens,
             usuariosDisponiveis,
@@ -271,15 +265,7 @@ async function buscarMensagens(req, res) {
 
         const encontradas = await Mensagem.buscarPorTexto(conversa.id, termo);
 
-        const nomes = {};
-        async function nomeDe(id) {
-            const chave = String(id);
-            if (!nomes[chave]) {
-                const u = await Usuario.buscarPorId(id);
-                nomes[chave] = u ? u.nome : 'Usuário removido';
-            }
-            return nomes[chave];
-        }
+        const nomeDe = ResolvedorNomes.criar();
 
         const resultados = [];
         for (const m of encontradas) {
@@ -293,13 +279,15 @@ async function buscarMensagens(req, res) {
             });
         }
 
+        const rotulo = await rotularConversa(conversa, req.usuario.id);
+
         res.render('conversas/detalhe', {
-            titulo: 'Busca · ' + (await rotularConversa(conversa, req.usuario.id)),
+            titulo: 'Busca · ' + rotulo,
             conversa: {
                 id: conversa.id,
                 tipo: conversa.tipo,
                 ehGrupo: conversa.tipo === 'grupo',
-                rotulo: await rotularConversa(conversa, req.usuario.id)
+                rotulo: rotulo
             },
             mensagens: resultados,
             participantes: [],
