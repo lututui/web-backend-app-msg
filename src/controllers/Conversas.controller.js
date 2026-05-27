@@ -38,51 +38,43 @@ async function rotularConversa(conversa, usuarioIdLogado) {
 }
 
 // GET /conversas
-async function listar(req, res, next) {
-    try {
-        const conversas = await Conversa.listarPorUsuario(req.usuario.id);
+async function listar(req, res) {
+    const conversas = await Conversa.listarPorUsuario(req.usuario.id);
 
-        // Roluto de cada conversa
-        const lista = [];
-        for (const conversa of conversas) {
-            lista.push({
-                id: conversa.id,
-                tipo: conversa.tipo,
-                rotulo: await rotularConversa(conversa, req.usuario.id),
-                qtdParticipantes: conversa.participantes.length,
-                dataCriacao: conversa.dataCriacao
-            });
-        }
-
-        res.render('conversas/lista', {
-            titulo: 'Conversas',
-            conversas: lista
+    // Roluto de cada conversa
+    const lista = [];
+    for (const conversa of conversas) {
+        lista.push({
+            id: conversa.id,
+            tipo: conversa.tipo,
+            rotulo: await rotularConversa(conversa, req.usuario.id),
+            qtdParticipantes: conversa.participantes.length,
+            dataCriacao: conversa.dataCriacao
         });
-    } catch (erro) {
-        next(erro);
     }
+
+    res.render('conversas/lista', {
+        titulo: 'Conversas',
+        conversas: lista
+    });
 }
 
 // GET /conversas/nova
-async function formularioNova(req, res, next) {
-    try {
-        const todos = await Usuario.listarTodos();
-        const outros = todos
-            .filter((u) => u.id.toString() !== String(req.usuario.id))
-            .map((u) => ({ id: u.id, nome: u.nome, telefone: u.telefone }));
+async function formularioNova(req, res) {
+    const todos = await Usuario.listarTodos();
+    const outros = todos
+        .filter((u) => u.id.toString() !== String(req.usuario.id))
+        .map((u) => ({ id: u.id, nome: u.nome, telefone: u.telefone }));
 
-        res.render('conversas/nova', {
-            titulo: 'Nova conversa',
-            usuarios: outros,
-            valores: {}
-        });
-    } catch (erro) {
-        next(erro);
-    }
+    res.render('conversas/nova', {
+        titulo: 'Nova conversa',
+        usuarios: outros,
+        valores: {}
+    });
 }
 
 // POST /conversas
-async function criar(req, res, next) {
+async function criar(req, res) {
     const { tipo, nome } = req.body;
 
     // participantes: string ou array
@@ -91,13 +83,14 @@ async function criar(req, res, next) {
         participantes = [participantes];
     }
 
-
     // Re-exibe o formulario de nova conversa
     async function reexibir(erros) {
         const todos = await Usuario.listarTodos();
+
         const outros = todos
             .filter((u) => u.id.toString() !== String(req.usuario.id))
             .map((u) => ({ id: u.id, nome: u.nome, telefone: u.telefone }));
+
         return res.status(400).render('conversas/nova', {
             titulo: 'Nova conversa',
             usuarios: outros,
@@ -158,12 +151,17 @@ async function criar(req, res, next) {
         res.redirect('/conversas/' + conversa.id);
     } catch (erro) {
         Logger.error(erro, 'Conversas.criar');
-        return reexibir([erro.message]);
+
+        if (ehErroDeFormulario(erro)) {
+            return reexibir([erro.message]);
+        }
+
+        throw erro;
     }
 }
 
 // GET /conversas/:id
-async function abrir(req, res, next) {
+async function abrir(req, res) {
     try {
         const conversa = await carregarConversaPermitida(
             req.params.id,
@@ -239,9 +237,9 @@ async function abrir(req, res, next) {
         });
     } catch (erro) {
         Logger.error(erro, 'Conversas');
-        
+
         if (!ehErroDeFormulario(erro)) {
-            return next(erro);
+            throw erro;
         }
 
         res.flash('erro', erro.message);
@@ -250,7 +248,7 @@ async function abrir(req, res, next) {
 }
 
 // GET /conversas/:id/buscar
-async function buscarMensagens(req, res, next) {
+async function buscarMensagens(req, res) {
     try {
         const conversa = await carregarConversaPermitida(
             req.params.id,
@@ -302,9 +300,9 @@ async function buscarMensagens(req, res, next) {
         });
     } catch (erro) {
         Logger.error(erro, 'Conversas');
-        
+
         if (!ehErroDeFormulario(erro)) {
-            return next(erro);
+            throw erro;
         }
 
         res.flash('erro', erro.message);
@@ -313,7 +311,7 @@ async function buscarMensagens(req, res, next) {
 }
 
 // POST /conversas/:id/participantes
-async function adicionarParticipante(req, res, next) {
+async function adicionarParticipante(req, res) {
     try {
         const conversa = await carregarConversaPermitida(
             req.params.id,
@@ -326,11 +324,12 @@ async function adicionarParticipante(req, res, next) {
         Logger.error(erro, 'Conversas.adicionarParticipante');
         res.flash('erro', erro.message);
     }
+
     res.redirect('/conversas/' + req.params.id);
 }
 
 // POST /conversas/:id/participantes/remover
-async function removerParticipante(req, res, next) {
+async function removerParticipante(req, res) {
     try {
         const conversa = await carregarConversaPermitida(
             req.params.id,
@@ -343,11 +342,12 @@ async function removerParticipante(req, res, next) {
         Logger.error(erro, 'Conversas.removerParticipante');
         res.flash('erro', erro.message);
     }
+
     res.redirect('/conversas/' + req.params.id);
 }
 
 // POST /conversas/:id/excluir
-async function excluir(req, res, next) {
+async function excluir(req, res) {
     try {
         const conversa = await carregarConversaPermitida(
             req.params.id,

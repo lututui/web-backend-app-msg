@@ -25,7 +25,7 @@ function formularioPerfil(req, res) {
 
 
 // POST /perfil
-async function atualizarPerfil(req, res, next) {
+async function atualizarPerfil(req, res) {
     const { nome, telefone, email } = req.body;
     const { senhaAtual, novaSenha, confirmacaoNovaSenha } = req.body;
 
@@ -40,123 +40,115 @@ async function atualizarPerfil(req, res, next) {
         });
     }
 
-    try {
-        const erros = coletarErros([
-            () => Validador.validarCampoObrigatorio(nome, 'nome'),
-            () => Validador.validarTamanho(nome, 2, 100, 'nome'),
-            () => Validador.validarTelefone(telefone)
-        ]);
 
-        if (email && email.trim().length > 0) {
-            try {
-                Validador.validarEmail(email);
-            } catch (erro) {
-                erros.push(erro.message);
-            }
+    const erros = coletarErros([
+        () => Validador.validarCampoObrigatorio(nome, 'nome'),
+        () => Validador.validarTamanho(nome, 2, 100, 'nome'),
+        () => Validador.validarTelefone(telefone)
+    ]);
+
+    if (email && email.trim().length > 0) {
+        try {
+            Validador.validarEmail(email);
+        } catch (erro) {
+            erros.push(erro.message);
         }
+    }
 
-        // Troca de senha OPCIONAL
-        const querTrocarSenha =
-            (senhaAtual && senhaAtual.length > 0) ||
-            (novaSenha && novaSenha.length > 0) ||
-            (confirmacaoNovaSenha && confirmacaoNovaSenha.length > 0);
+    // Troca de senha OPCIONAL
+    const querTrocarSenha =
+        (senhaAtual && senhaAtual.length > 0) ||
+        (novaSenha && novaSenha.length > 0) ||
+        (confirmacaoNovaSenha && confirmacaoNovaSenha.length > 0);
 
-        let novoHash = null;
+    let novoHash = null;
 
-        if (querTrocarSenha) {
-            const atualConfere = Senha.verificar(
-                senhaAtual || '',
-                req.usuario.senhaHash,
-                req.usuario.senhaSalt
-            );
-
-            if (!atualConfere) {
-                erros.push('A senha atual esta incorreta.');
-            }
-
-            try {
-                Validador.validarCampoObrigatorio(novaSenha, 'nova senha');
-                Validador.validarTamanho(
-                    novaSenha,
-                    SENHA_MIN,
-                    SENHA_MAX,
-                    'nova senha'
-                );
-            } catch (erro) {
-                erros.push(erro.message);
-            }
-
-            if (novaSenha && novaSenha !== confirmacaoNovaSenha) {
-                erros.push('A nova senha e a confirmacao nao coincidem.');
-            }
-
-            if (atualConfere &&
-                novaSenha &&
-                novaSenha.length >= SENHA_MIN &&
-                novaSenha === confirmacaoNovaSenha) {
-                novoHash = Senha.gerarHash(novaSenha);
-            }
-        }
-
-        if (erros.length > 0) {
-            return reexibir(erros);
-        }
-
-        req.usuario.nome = nome;
-        req.usuario.telefone = telefone;
-        req.usuario.email = email || '';
-
-        if (novoHash) {
-            req.usuario.senhaHash = novoHash.hash;
-            req.usuario.senhaSalt = novoHash.salt;
-        }
-
-        await req.usuario.atualizar();
-
-        Logger.info(
-            `Perfil atualizado: ${req.usuario.id}`,
-            'Perfil.atualizarPerfil'
+    if (querTrocarSenha) {
+        const atualConfere = Senha.verificar(
+            senhaAtual || '',
+            req.usuario.senhaHash,
+            req.usuario.senhaSalt
         );
 
-        res.flash('sucesso', 'Perfil atualizado com sucesso.');
-        res.redirect('/perfil');
+        if (!atualConfere) {
+            erros.push('A senha atual esta incorreta.');
+        }
+
+        try {
+            Validador.validarCampoObrigatorio(novaSenha, 'nova senha');
+            Validador.validarTamanho(
+                novaSenha,
+                SENHA_MIN,
+                SENHA_MAX,
+                'nova senha'
+            );
+        } catch (erro) {
+            erros.push(erro.message);
+        }
+
+        if (novaSenha && novaSenha !== confirmacaoNovaSenha) {
+            erros.push('A nova senha e a confirmacao nao coincidem.');
+        }
+
+        if (atualConfere &&
+            novaSenha &&
+            novaSenha.length >= SENHA_MIN &&
+            novaSenha === confirmacaoNovaSenha) {
+            novoHash = Senha.gerarHash(novaSenha);
+        }
+    }
+
+    if (erros.length > 0) {
+        return reexibir(erros);
+    }
+
+    req.usuario.nome = nome;
+    req.usuario.telefone = telefone;
+    req.usuario.email = email || '';
+
+    if (novoHash) {
+        req.usuario.senhaHash = novoHash.hash;
+        req.usuario.senhaSalt = novoHash.salt;
+    }
+
+    try {
+        await req.usuario.atualizar();
     } catch (erro) {
         if (ehErroDeFormulario(erro)) {
             return reexibir([erro.message]);
         }
 
-        next(erro);
+        throw erro;
     }
+
+    res.flash('sucesso', 'Perfil atualizado com sucesso.');
+    res.redirect('/perfil');
 }
 
 // GET /usuarios/buscar
-async function buscarUsuarios(req, res, next) {
-    try {
-        const termo = (req.query.q || '').trim();
+async function buscarUsuarios(req, res) {
+    const termo = (req.query.q || '').trim();
 
-        let resultados = [];
+    let resultados = [];
 
-        if (termo.length > 0) {
-            const encontrados = await Usuario.buscarPorNome(termo);
-            
-            resultados = encontrados
-                .filter((u) => u.id.toString() !== String(req.usuario.id))
-                .map((u) => ({
-                    id: u.id,
-                    nome: u.nome,
-                    telefone: u.telefone
-                }));
-        }
+    if (termo.length > 0) {
+        const encontrados = await Usuario.buscarPorNome(termo);
 
-        res.render('perfil/buscar', {
-            titulo: 'Buscar usuarios',
-            termo,
-            buscou: termo.length > 0,
-            resultados
-        });
-    } catch (erro) {
-        next(erro);
+        resultados = encontrados
+            .filter((u) => u.id.toString() !== String(req.usuario.id))
+            .map((u) => ({
+                id: u.id,
+                nome: u.nome,
+                telefone: u.telefone
+            }));
     }
+
+    res.render('perfil/buscar', {
+        titulo: 'Buscar usuarios',
+        termo,
+        buscou: termo.length > 0,
+        resultados
+    });
 }
 
 module.exports = { formularioPerfil, atualizarPerfil, buscarUsuarios };

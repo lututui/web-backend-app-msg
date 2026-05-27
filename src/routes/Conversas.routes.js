@@ -6,19 +6,22 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../controllers/Conversas.controller');
+const asyncHandler = require('../middlewares/asyncHandler');
 const { exigirLogin } = require('../middlewares/Autenticacao');
 
 router.use(exigirLogin);
 
-router.get('/conversas', ctrl.listar);
-router.get('/conversas/nova', ctrl.formularioNova);
-router.post('/conversas', ctrl.criar);
+router.get('/conversas', asyncHandler(ctrl.listar));
+router.post('/conversas', asyncHandler(ctrl.criar));
 
-router.get('/conversas/:id', ctrl.abrir);
-router.get('/conversas/:id/buscar', ctrl.buscarMensagens);
+router.get('/conversas/nova', asyncHandler(ctrl.formularioNova));
 
-router.post('/conversas/:id/participantes', ctrl.adicionarParticipante);
-router.post('/conversas/:id/participantes/remover', ctrl.removerParticipante);
-router.post('/conversas/:id/excluir', ctrl.excluir);
+router.get('/conversas/:id', asyncHandler(ctrl.abrir));
+router.get('/conversas/:id/buscar', asyncHandler(ctrl.buscarMensagens));
+
+router.post('/conversas/:id/participantes', asyncHandler(ctrl.adicionarParticipante));
+router.post('/conversas/:id/participantes/remover', asyncHandler(ctrl.removerParticipante));
+
+router.post('/conversas/:id/excluir', asyncHandler(ctrl.excluir));
 
 module.exports = router;

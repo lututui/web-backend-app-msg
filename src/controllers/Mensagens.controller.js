@@ -13,7 +13,7 @@ const CONTEUDO_MAX = 4000;
 
 
 // POST /conversas/:id/mensagens
-async function enviar(req, res, next) {
+async function enviar(req, res) {
     const conversaId = req.params.id;
     const conteudo = (req.body.conteudo || '').trim();
 
@@ -53,7 +53,7 @@ async function enviar(req, res, next) {
         Logger.error(erro, 'Mensagens.enviar');
 
         if (!ehErroDeFormulario(erro)) {
-            return next(erro);
+            throw erro;
         }
 
         res.flash('erro', erro.message);
@@ -62,7 +62,7 @@ async function enviar(req, res, next) {
 }
 
 // POST /mensagens/:id/lida
-async function marcarLida(req, res, next) {
+async function marcarLida(req, res) {
     try {
         Validador.validarId(req.params.id);
 
@@ -88,7 +88,7 @@ async function marcarLida(req, res, next) {
         Logger.error(erro, 'Mensagens.marcarLida');
 
         if (!ehErroDeFormulario(erro)) {
-            return next(erro);
+            throw erro;
         }
 
         res.flash('erro', erro.message);
@@ -97,7 +97,7 @@ async function marcarLida(req, res, next) {
 }
 
 // POST /mensagens/:id/excluir
-async function excluir(req, res, next) {
+async function excluir(req, res) {
     try {
         Validador.validarId(req.params.id);
 
@@ -124,7 +124,7 @@ async function excluir(req, res, next) {
         Logger.error(erro, 'Mensagens.excluir');
         
         if (!ehErroDeFormulario(erro)) {
-            return next(erro);
+            throw erro;
         }
         
         res.flash('erro', erro.message);

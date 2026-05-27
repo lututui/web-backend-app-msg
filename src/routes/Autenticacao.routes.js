@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../controllers/Autenticacao.controller');
+const asyncHandler = require('../middlewares/asyncHandler');
 const { exigirLogin } = require('../middlewares/Autenticacao');
 
 // Raiz: leva ao app se logado, ao login caso contrario
@@ -14,14 +15,14 @@ router.get('/', (req, res) => {
 });
 
 // Cadastro
-router.get('/cadastro', ctrl.formularioCadastro);
-router.post('/cadastro', ctrl.cadastrar);
+router.get('/cadastro', asyncHandler(ctrl.formularioCadastro));
+router.post('/cadastro', asyncHandler(ctrl.cadastrar));
 
 // Login
-router.get('/login', ctrl.formularioLogin);
-router.post('/login', ctrl.logar);
+router.get('/login', asyncHandler(ctrl.formularioLogin));
+router.post('/login', asyncHandler(ctrl.logar));
 
 // Logout (precisa estar logado)
-router.post('/logout', exigirLogin, ctrl.logout);
+router.post('/logout', exigirLogin, asyncHandler(ctrl.logout));
 
 module.exports = router;

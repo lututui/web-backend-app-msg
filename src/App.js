@@ -14,6 +14,7 @@ const hbs = require('hbs');
 const sessao = require('./config/Sessao');
 const flash = require('./middlewares/Flash');
 const { carregarUsuario } = require('./middlewares/Autenticacao');
+const { naoEncontrado, tratadorDeErro } = require('./middlewares/Erros');
 
 const app = express();
 
@@ -45,6 +46,7 @@ hbs.registerHelper('incluiId', function (lista, id) {
     if (!Array.isArray(lista)) {
         return String(lista) === String(id);
     }
+
     return lista.some(function (item) {
         return String(item) === String(id);
     });
@@ -65,19 +67,8 @@ app.get('/', (req, res) => {
 });
 */
 
-/** 
- * Erros
- */
-
-// 404
-app.use((req, res) => {
-    res.status(404).render('erros/404', { titulo: 'Nao encontrado' });
-});
-
-// 500
-app.use((erro, req, res, next) => {
-    console.error('Erro nao tratado:', erro.message);
-    res.status(500).render('erros/500', { titulo: 'Erro interno' });
-});
+// Erros
+app.use(naoEncontrado);
+app.use(tratadorDeErro);
 
 module.exports = app;
