@@ -1,0 +1,61 @@
+{{> cabecalho}}
+
+<section class="pagina pagina--estreita">
+    <div class="pagina__topo">
+        <div>
+            <p class="pagina__supra">Grupo</p>
+            <h1 class="pagina__titulo">{{conversa.nome}}</h1>
+        </div>
+        <a class="botao botao--fantasma"
+            href="/conversas/{{conversa.id}}">Voltar a conversa</a>
+    </div>
+
+    {{> flash}}
+
+    <h2 class="grupo-painel__titulo">Participantes</h2>
+    <ul class="grupo-painel__lista">
+        {{#each participantes}}
+            <li class="grupo-painel__item">
+                <span>
+                    {{this.nome}}
+                    {{#if this.ehEu}}<em>(voce)</em>{{/if}}
+                </span>
+                {{#unless this.ehEu}}
+                    <form method="post"
+                        action="/conversas/{{../conversa.id}}/participantes/remover">
+                        <input type="hidden" name="usuarioId"
+                            value="{{this.id}}">
+                        <button class="botao botao--fantasma botao--pequeno"
+                            type="submit">Remover</button>
+                    </form>
+                {{/unless}}
+            </li>
+        {{/each}}
+    </ul>
+
+    {{#if disponiveis.length}}
+        <h2 class="grupo-painel__titulo">Adicionar participante</h2>
+        <form class="grupo-painel__add" method="post"
+            action="/conversas/{{conversa.id}}/participantes">
+            <select class="campo__entrada" name="usuarioId">
+                {{#each disponiveis}}
+                    <option value="{{this.id}}">{{this.nome}} ({{this.telefone}})</option>
+                {{/each}}
+            </select>
+            <button class="botao botao--pequeno" type="submit">Adicionar</button>
+        </form>
+    {{else}}
+        <p class="vazio__texto vazio__texto--centro">
+            Todos os usuarios ja sao participantes deste grupo.
+        </p>
+    {{/if}}
+
+    <form class="acao-perigo" method="post"
+        action="/conversas/{{conversa.id}}/excluir">
+        <button class="botao botao--perigo" type="submit">
+            Excluir grupo
+        </button>
+    </form>
+</section>
+
+{{> rodape}}

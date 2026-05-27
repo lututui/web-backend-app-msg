@@ -19,6 +19,7 @@ router.get('/conversas/grupo', asyncHandler(ctrl.formularioNovoGrupo));
 
 router.get('/conversas/:id', asyncHandler(ctrl.abrir));
 router.get('/conversas/:id/buscar', asyncHandler(ctrl.buscarMensagens));
+router.get('/conversas/:id/membros', asyncHandler(ctrl.membros));
 
 router.post('/conversas/:id/participantes', asyncHandler(ctrl.adicionarParticipante));
 router.post('/conversas/:id/participantes/remover', asyncHandler(ctrl.removerParticipante));

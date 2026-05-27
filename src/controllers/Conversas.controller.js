@@ -211,23 +211,15 @@ async function abrir(req, res) {
         }
 
         // Marcar mensagens como lidas
-        for (const m of mensagens) {
-            const recebida =
-                m.remetenteId.toString() !== String(req.usuario.id);
-            if (recebida && m.status !== 'lida') {
-                await m.marcarComoLida();
-            }
-        }
+        if (conversa.tipo === 'individual') {
+            for (const m of mensagens) {
+                const recebida =
+                    m.remetenteId.toString() !== String(req.usuario.id);
 
-        // Lista de participantes
-        const participantes = [];
-        for (const pid of conversa.participantes) {
-            const u = await Usuario.buscarPorId(pid);
-            participantes.push({
-                id: pid,
-                nome: u ? u.nome : 'Usuário removido',
-                ehEu: pid.toString() === String(req.usuario.id)
-            });
+                if (recebida && m.status !== 'lida') {
+                    await m.marcarComoLida();
+                }
+            }
         }
 
         let usuariosDisponiveis = [];
@@ -248,7 +240,6 @@ async function abrir(req, res) {
                 rotulo: await rotularConversa(conversa, req.usuario.id)
             },
             mensagens: listaMensagens,
-            participantes,
             usuariosDisponiveis,
             termoBusca: ''
         });
@@ -327,6 +318,57 @@ async function buscarMensagens(req, res) {
     }
 }
 
+// GET /conversas/:id/membros
+async function membros(req, res) {
+    try {
+        const conversa = await carregarConversaPermitida(
+            req.params.id,
+            req.usuario.id
+        );
+
+        if (conversa.tipo !== 'grupo') {
+            res.flash('erro', 'Esta conversa nao e um grupo.');
+            return res.redirect('/conversas/' + conversa.id);
+        }
+
+        const participantes = [];
+        for (const pid of conversa.participantes) {
+            const u = await Usuario.buscarPorId(pid);
+            participantes.push({
+                id: pid,
+                nome: u ? u.nome : 'Usuario removido',
+                ehEu: pid.toString() === String(req.usuario.id)
+            });
+        }
+
+        const todos = await Usuario.listarTodos();
+        const idsParticipantes = new Set(
+            conversa.participantes.map((p) => p.toString())
+        );
+
+        const disponiveis = todos
+            .filter((u) => !idsParticipantes.has(u.id.toString()))
+            .map((u) => ({ id: u.id, nome: u.nome, telefone: u.telefone }));
+
+        res.render('conversas/membros', {
+            titulo: conversa.nome || 'Grupo',
+            conversa: {
+                id: conversa.id,
+                nome: conversa.nome || 'Grupo sem nome'
+            },
+            participantes,
+            disponiveis
+        });
+    } catch (erro) {
+        if (!ehErroDeFormulario(erro)) {
+            throw erro;
+        }
+
+        res.flash('erro', erro.message);
+        res.redirect('/conversas');
+    }
+}
+
 // POST /conversas/:id/participantes
 async function adicionarParticipante(req, res) {
     try {
@@ -342,7 +384,7 @@ async function adicionarParticipante(req, res) {
         res.flash('erro', erro.message);
     }
 
-    res.redirect('/conversas/' + req.params.id);
+    res.redirect('/conversas/' + req.params.id + '/membros');
 }
 
 // POST /conversas/:id/participantes/remover
@@ -360,7 +402,7 @@ async function removerParticipante(req, res) {
         res.flash('erro', erro.message);
     }
 
-    res.redirect('/conversas/' + req.params.id);
+    res.redirect('/conversas/' + req.params.id + '/membros');
 }
 
 // POST /conversas/:id/excluir
@@ -388,6 +430,7 @@ module.exports = {
     criar,
     abrir,
     buscarMensagens,
+    membros,
     adicionarParticipante,
     removerParticipante,
     excluir
