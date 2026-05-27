@@ -52,6 +52,30 @@ hbs.registerHelper('incluiId', function (lista, id) {
     });
 });
 
+hbs.registerHelper('horaCurta', function (valor) {
+    if (!valor) {
+        return '';
+    }
+    const data = new Date(valor);
+    if (isNaN(data.getTime())) {
+        return '';
+    }
+
+    const dois = (n) => String(n).padStart(2, '0');
+    const hora = `${dois(data.getHours())}:${dois(data.getMinutes())}`;
+
+    const hoje = new Date();
+    const mesmoDia =
+        data.getDate() === hoje.getDate() &&
+        data.getMonth() === hoje.getMonth() &&
+        data.getFullYear() === hoje.getFullYear();
+
+    if (mesmoDia) {
+        return hora;
+    }
+    return `${dois(data.getDate())}/${dois(data.getMonth() + 1)} ${hora}`;
+});
+
 
 app.use(sessao);
 

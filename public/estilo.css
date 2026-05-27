@@ -234,6 +234,20 @@ body {
     color: var(--erro);
 }
 
+.botao--perigo {
+    background: var(--erro);
+}
+
+.botao--perigo:hover {
+    background: #8f1e17;
+}
+
+.acao-perigo {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--borda);
+}
+
 .aviso {
     border-radius: 10px;
     padding: 0.85rem 1rem;
@@ -252,6 +266,12 @@ body {
     background: var(--ok-fundo);
     border-color: rgba(31, 122, 77, 0.25);
     color: var(--ok);
+}
+
+.aviso--info {
+    background: rgba(31, 128, 104, 0.10);
+    border-color: rgba(31, 128, 104, 0.25);
+    color: var(--marca);
 }
 
 .aviso__titulo {
@@ -325,6 +345,15 @@ body {
     display: flex;
     gap: 0.5rem;
     margin-top: 0.35rem;
+    opacity: 0.65;
+}
+
+.balao--minha .balao__acoes {
+    justify-content: flex-end;
+}
+
+.balao:hover .balao__acoes {
+    opacity: 1;
 }
 
 .balao__botao {
@@ -400,4 +429,309 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+}
+
+.conversas .conversa-item {
+    display: block;
+}
+
+.conversa-painel {
+    background: var(--papel);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    padding: 1.25rem;
+    margin-top: 1rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.mensagens-lista {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.balao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 75%;
+    padding: 0.6rem 0.85rem;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.balao--minha {
+    align-self: flex-end;
+    background: var(--marca);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.balao--outra {
+    align-self: flex-start;
+    background: var(--fundo);
+    border: 1px solid var(--borda);
+    color: var(--tinta);
+    border-bottom-left-radius: 4px;
+}
+
+.balao__autor {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--marca-clara);
+}
+
+.balao__texto {
+    white-space: pre-wrap;
+}
+
+.balao__rodape {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+.balao--minha .balao__rodape {
+    justify-content: flex-end;
+}
+
+.balao__status {
+    text-transform: capitalize;
+}
+
+.envio {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.envio__campo {
+    flex: 1;
+}
+
+.pagina {
+    display: flex;
+    flex-direction: column;
+}
+
+.pagina--estreita {
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.pagina__topo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.pagina__supra {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--marca-clara);
+    margin-bottom: 0.2rem;
+}
+
+.pagina__titulo {
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 1.9rem;
+    color: var(--tinta);
+}
+
+/* --- Lista de conversas ------------------------------------------------- */
+.conversas {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+/* Cada conversa: um cartao clicavel. */
+.conversa-item__link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 1rem;
+    background: var(--papel);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    text-decoration: none;
+    color: var(--tinta);
+    transition: border-color 0.15s, transform 0.05s, box-shadow 0.15s;
+}
+
+.conversa-item__link:hover {
+    border-color: var(--marca-clara);
+    box-shadow: var(--sombra);
+}
+
+.conversa-item__link:active {
+    transform: translateY(1px);
+}
+
+/* Avatar redondo com a inicial do tipo (# grupo, @ individual). */
+.conversa-item__avatar {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--marca);
+    color: #fff;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+.conversa-item__corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.conversa-item__nome {
+    font-weight: 600;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conversa-item__meta {
+    font-size: 0.82rem;
+    color: var(--tinta-suave);
+}
+
+.vazio {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: var(--papel);
+    border: 1px dashed var(--borda);
+    border-radius: var(--raio);
+}
+
+.vazio__titulo {
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+}
+
+.vazio__texto {
+    color: var(--tinta-suave);
+    margin-bottom: 1.25rem;
+}
+
+.vazio__texto--centro {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.busca {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.busca .campo__entrada {
+    flex: 1;
+}
+
+.grupo-painel {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: var(--papel);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+}
+
+.grupo-painel__titulo {
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+.grupo-painel__lista {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.grupo-painel__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--fundo);
+    border-radius: 8px;
+    font-size: 0.92rem;
+}
+
+.grupo-painel__item em {
+    color: var(--tinta-suave);
+    font-style: normal;
+    font-size: 0.82rem;
+}
+
+.grupo-painel__add {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.grupo-painel__add .campo__entrada {
+    flex: 1;
+}
+
+.opcao {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.92rem;
+    cursor: pointer;
+}
+
+.opcao--linha {
+    align-items: flex-start;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    background: var(--papel);
+}
+
+.opcao--linha:hover {
+    border-color: var(--marca-clara);
+}
+
+.opcao__sub {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--tinta-suave);
+    font-weight: 400;
+}
+
+.lista-selecao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    max-height: 260px;
+    overflow-y: auto;
 }

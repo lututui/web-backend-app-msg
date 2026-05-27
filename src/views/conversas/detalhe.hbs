@@ -39,7 +39,7 @@
                         {{/unless}}
                         <span class="balao__texto">{{this.conteudo}}</span>
                         <span class="balao__rodape">
-                            <span class="balao__hora">{{this.timestamp}}</span>
+                            <span class="balao__hora">{{horaCurta this.timestamp}}</span>
                             {{#if this.ehMinha}}
                                 <span class="balao__status">{{this.status}}</span>
                             {{/if}}
