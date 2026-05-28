@@ -6,11 +6,6 @@ Reusa as classes do Projeto 1 (`Usuario`, `Conversa`, `Mensagem`) como camada de
 
 ## Tecnologias
 
-"express": "^5.2.1",
-    "hbs": "^4.2.1",
-    "mongodb": "^7.2.0",
-    "express-session": "^1.19.0"
-
 - **Node.js** (≥ 20.19.0)
 - **Express.js** (≥ 5.2.1)
 - **express-session** (≥ 1.19.0) - sessões de usuário
