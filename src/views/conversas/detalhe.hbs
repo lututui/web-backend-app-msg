@@ -7,6 +7,9 @@
                 {{#if conversa.ehGrupo}}Grupo{{else}}Conversa{{/if}}
             </p>
             <h1 class="pagina__titulo">{{conversa.rotulo}}</h1>
+            {{#unless conversa.ehGrupo}}
+            <p class="pagina__subtitulo">{{conversa.telefone}}</p>
+            {{/unless}}
         </div>
         <div class="pagina__acoes">
             {{#if conversa.ehGrupo}}
@@ -57,7 +60,7 @@
                     </form>
                     {{/if}}
 
-                    {{#unless conversa.ehGrupo}}
+                    {{#unless ../conversa.ehGrupo}}
                     {{#unless this.ehMinha}}
                     {{#unless (ehIgual this.status "lida")}}
                     <form method="post" action="/mensagens/{{this.id}}/lida">

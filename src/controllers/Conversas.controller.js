@@ -18,24 +18,28 @@ const ResolvedorNomes = require('../utils/ResolvedorNomes');
  * 
  * @param {Conversa} conversa
  * @param {string} usuarioIdLogado
- * @returns {Promise<string>}
+ * @returns {Promise<{ nome: string, telefone: string }>}
  */
 async function rotularConversa(conversa, usuarioIdLogado) {
     if (conversa.tipo === 'grupo') {
-        return conversa.nome || 'Grupo sem nome';
+        return { nome: conversa.nome || 'Grupo sem nome', telefone: '' };
     }
 
-    // Individual
     const outroId = conversa.participantes.find(
         (p) => p.toString() !== String(usuarioIdLogado)
     );
 
     if (!outroId) {
-        return 'Conversa';
+        return { nome: 'Conversa', telefone: '' };
     }
 
     const outro = await Usuario.buscarPorId(outroId);
-    return outro ? outro.nome : 'Usuário removido';
+
+    if (!outro) {
+        return { nome: 'Usuário removido', telefone: '' };
+    }
+
+    return { nome: outro.nome, telefone: outro.telefone };
 }
 
 // GET /conversas
@@ -45,10 +49,13 @@ async function listar(req, res) {
     // Roluto de cada conversa
     const lista = [];
     for (const conversa of conversas) {
+        const rotulo = await rotularConversa(conversa, req.usuario.id);
+
         lista.push({
             id: conversa.id,
             tipo: conversa.tipo,
-            rotulo: await rotularConversa(conversa, req.usuario.id),
+            rotulo: rotulo.nome,
+            telefone: rotulo.telefone,
             qtdParticipantes: conversa.participantes.length,
             dataCriacao: conversa.dataCriacao
         });
@@ -226,12 +233,13 @@ async function abrir(req, res) {
         const rotulo = await rotularConversa(conversa, req.usuario.id);
 
         res.render('conversas/detalhe', {
-            titulo: rotulo,
+            titulo: rotulo.nome,
             conversa: {
                 id: conversa.id,
                 tipo: conversa.tipo,
                 ehGrupo: conversa.tipo === 'grupo',
-                rotulo: rotulo
+                rotulo: rotulo.nome,
+                telefone: rotulo.telefone
             },
             mensagens: listaMensagens,
             usuariosDisponiveis,
@@ -280,14 +288,14 @@ async function buscarMensagens(req, res) {
         }
 
         const rotulo = await rotularConversa(conversa, req.usuario.id);
-
         res.render('conversas/detalhe', {
-            titulo: 'Busca · ' + rotulo,
+            titulo: 'Busca · ' + rotulo.nome,
             conversa: {
                 id: conversa.id,
                 tipo: conversa.tipo,
                 ehGrupo: conversa.tipo === 'grupo',
-                rotulo: rotulo
+                rotulo: rotulo.nome,
+                telefone: rotulo.telefone
             },
             mensagens: resultados,
             participantes: [],
